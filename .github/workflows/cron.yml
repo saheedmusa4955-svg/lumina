@@ -1,0 +1,17 @@
+name: Hourly Cron Ping
+
+on:
+  schedule:
+    - cron: '0 * * * *' # Runs at minute 0 of every hour
+  workflow_dispatch: # Allows manual triggering from GitHub UI
+
+jobs:
+  ping_cron:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping API Cron Endpoint
+        run: |
+          curl -X GET "${{ secrets.VERCEL_APP_URL }}/api/cron" \
+          -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+          -H "Content-Type: application/json" \
+          --fail
