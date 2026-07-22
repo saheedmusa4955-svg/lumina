@@ -146,6 +146,7 @@ router.post('/login', async (req, res) => {
     
     res.json({ token, user: { id: user.id, email: user.email, fullName: user.fullName, role: user.role, wallets: finalUser!.wallets, kycStatus: user.kycStatus, accountNumber: user.accountNumber, accountStatus: user.accountStatus, isTwoFactorEnabled: user.isTwoFactorEnabled, country: user.country } });
   } catch (error) {
+    console.error('Login Error:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
@@ -161,6 +162,7 @@ router.get('/me', authenticate, async (req: AuthRequest, res) => {
     
     res.json({ user });
   } catch (error) {
+    console.error('/me Route Error:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });

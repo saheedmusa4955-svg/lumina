@@ -10,18 +10,20 @@ export const sendEmail = async (to: string, subject: string, html: string) => {
       config[s.key] = s.value;
     });
 
-    const provider = config['EMAIL_PROVIDER'] || 'SMTP';
+    const dbApiKey = config['BREVO_API_KEY'];
+    const brevoApiKey = (dbApiKey && dbApiKey !== 'xkeysib-placeholder') ? dbApiKey : process.env.BREVO_API_KEY;
+    const provider = config['EMAIL_PROVIDER'] || process.env.EMAIL_PROVIDER || (brevoApiKey ? 'BREVO' : 'SMTP');
     const fromAddress = config['SMTP_FROM'] || process.env.SMTP_FROM || '"Lumina Bank" <noreply@luminabank.com>';
 
     console.log(`Preparing to send email to ${to} via ${provider}`);
 
-    if (provider === 'BREVO' && config['BREVO_API_KEY']) {
+    if (provider === 'BREVO' && brevoApiKey) {
       // Send using Brevo HTTP API
       const response = await fetch('https://api.brevo.com/v3/smtp/email', {
         method: 'POST',
         headers: {
           'accept': 'application/json',
-          'api-key': config['BREVO_API_KEY'],
+          'api-key': brevoApiKey,
           'content-type': 'application/json'
         },
         body: JSON.stringify({
